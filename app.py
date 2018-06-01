@@ -174,8 +174,11 @@ def UpdateCrawlerMain():
     d = Parameter()
     NewD = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
     # Send Message
+    if list(d.keys()).count('Update') is 0:
+        d['Update'] = "None"
     msg = "Update Date : " + d['Update'] + "->" + NewD
     msg = msg + "\n" + "Add " + str(AddPicNum) + " Picture"
+
     d['Update'] = NewD
     WriteParameter(d)
     # endregion
