@@ -56,6 +56,7 @@ def handle_message(event):
     elif event.message.text == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
+        print(s)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=s))
@@ -70,6 +71,7 @@ def returnContent(U_Receive,Mode=""):
     C = TextSendMessage(text=U_Receive)
     if Mode is "img" or U_Receive == "抽":
         img = RandomPic()
+        print(img)
         C = ImageSendMessage(
             type='image',
             original_content_url=img,  # Pic Url
@@ -197,4 +199,5 @@ def SearchPicUrl(url):
 # endregion
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=os.environ['PORT'])
+    # app.run(host='0.0.0.0',port=os.environ['PORT'])
+    UpdateCrawlerMain()
