@@ -44,7 +44,7 @@ def callback():
 def handle_message(event):
     print("Handle: reply_token: " + event.reply_token + ", message: " + event.message.text)
     # content = "{}: {}".format(event.source.user_id, event.message.text)
-    if event.message.text is "更新":
+    if event.message.text == "更新":
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
@@ -53,7 +53,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=UpdMsg))
 
-    elif event.message.text is "檢查":
+    elif event.message.text == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
         line_bot_api.reply_message(
