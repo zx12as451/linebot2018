@@ -74,8 +74,8 @@ def returnContent(U_Receive,Mode=""):
         print(img)
         C = ImageSendMessage(
             type='image',
-            original_content_url=img,  # Pic Url
-            preview_image_url=img  # Preview Pic
+            original_content_url=img  # Pic Url
+            # preview_image_url=img  # Preview Pic
         )
     return C
 
