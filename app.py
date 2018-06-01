@@ -82,7 +82,8 @@ def returnContent(U_Receive,Mode=""):
 def RandomPic():
     img = "https://m1.ablwang.com/uploadfile/2017/0901/20170901042508280.jpg"
     with open("B.txt","r") as file:
-        l = file.readlines()
+        d = file.read()
+        l = d.split("\n")
         img = random.choice(l)
     return img
 
@@ -194,7 +195,7 @@ def SearchPicUrl(url):
     for p in soup.findAll('div', {'class': 'richcontent'}):
         imgObj = p.find('a')
         if imgObj is not None:
-            t.append(imgObj.get('href').replace("//","https://"))
+            t.append(imgObj.get('href').replace("//","https://")+"\n")
     return t
 # endregion
 
