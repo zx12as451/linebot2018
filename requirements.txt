@@ -1,2 +1,9 @@
 line-bot-sdk
 flask
+BeautifulSoup4
+requests
+time
+datetime
+codecs
+random
+os
