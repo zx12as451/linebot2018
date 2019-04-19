@@ -146,7 +146,7 @@ def WriteData(l):
     with codecs.open("B.txt","a","utf8") as f:
         f.writelines(l)
 
-def UpdateCrawlerMain():
+def UpdateCrawlerMain(PageNum):
     Continue = True
     prePage = ""
     UHeader = "https://www.ptt.cc"
@@ -155,7 +155,7 @@ def UpdateCrawlerMain():
     AddPicNum = 0
 
     # region Handle
-    while N < 10:
+    while N <= PageNum:
         N = N + 1
         time.sleep(3)
         print("Now Number = ", N)
@@ -213,8 +213,15 @@ def SearchPicUrl(url):
         if imgObj is not None:
             t.append(imgObj.get('href').replace("//","https://")+"\n")
     return t
+def AddJpg():
+    # 目前累積兩次Update(手動更新)，尋找.png的檔案為第二次的開始
+    with codecs.open("B.txt","r","utf8") as r:
+        l = list(row.replace("\n", "") + ".jpg\n" for row in r.readlines())
+    with codecs.open("B.txt","w","utf8") as f:
+        f.writelines(l)
 # endregion
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=os.environ['PORT'])
-    # UpdateCrawlerMain()
+    # UpdateCrawlerMain(10)
+    # AddJpg()
