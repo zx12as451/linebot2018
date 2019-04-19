@@ -61,14 +61,21 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=s))
     else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            returnContent(event.message.text))
+        if str(event.message.text).find("抽") != -1: # 是否含有"抽"
+            FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
+            Num = intTry(FilterMsg) # 取代後訊息是否能轉換成數值
+            if (Num <=5):
+                for i in range(Num):  # 發送多少圖
+                    time.sleep(0.5)
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        returnContent(event.message.text))
+
 
 import os
 import random
 def returnContent(U_Receive,Mode=""):
-    C = TextSendMessage(text=U_Receive)
+    # C = TextSendMessage(text=U_Receive)
     if Mode is "img" or U_Receive == "抽":
         img = RandomPic()
         print(img)
@@ -114,6 +121,13 @@ def GetRequest(Url):
         result = ""
 
     return result
+def intTry(Val=None):
+    try:
+        if Val == "":
+            return 1
+        return int(Val)
+    except:
+        return 0
 # endregion
 
 def Parameter():
@@ -200,5 +214,5 @@ def SearchPicUrl(url):
 # endregion
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=os.environ['PORT'])
-    # UpdateCrawlerMain()
+    # app.run(host='0.0.0.0',port=os.environ['PORT'])
+    UpdateCrawlerMain()
