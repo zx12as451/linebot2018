@@ -76,7 +76,7 @@ import os
 import random
 def returnContent(U_Receive,Mode=""):
     # C = TextSendMessage(text=U_Receive)
-    if Mode is "img" or U_Receive == "抽":
+    if Mode is "img" or str(U_Receive).find("抽") != -1:
         img = RandomPic()
         print(img)
         C = ImageSendMessage(
