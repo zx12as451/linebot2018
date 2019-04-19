@@ -65,29 +65,28 @@ def handle_message(event):
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
             Num = intTry(FilterMsg) # 取代後訊息是否能轉換成數值
             print(Num, "次")
-            if (Num <= 5):
-                for i in range(Num):  # 發送多少圖
-                    print(i, "次，發送開始")
-                    time.sleep(0.5)
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        returnContent(event.message.text))
-                    print(i, "次，發送結束")
+            line_bot_api.reply_message(
+                event.reply_token,
+                returnContent(event.message.text,Num))
 
 
 import os
 import random
-def returnContent(U_Receive,Mode=""):
+def returnContent(U_Receive,Times):
     # C = TextSendMessage(text=U_Receive)
-    if Mode is "img" or str(U_Receive).find("抽") != -1:
-        img = RandomPic()
-        print(img)
-        C = ImageSendMessage(
-            # type='image',
-            original_content_url=img,  # Pic Url
-            preview_image_url=img  # Preview Pic
-        )
-    return C
+    if str(U_Receive).find("抽") != -1:
+        if Times <= 5:
+            lst = []
+            for i in range(Times):
+                img = RandomPic()
+                C = ImageSendMessage(
+                    # type='image',
+                    original_content_url=img,  # Pic Url
+                    preview_image_url=img  # Preview Pic
+                )
+                lst.append(C)
+                print(img, i,"/",Times, "次")
+            return lst
 
 def RandomPic():
     img = "https://m1.ablwang.com/uploadfile/2017/0901/20170901042508280.jpg"
