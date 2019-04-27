@@ -48,7 +48,7 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
-        UpdMsg = UpdateCrawlerMain()
+        UpdMsg = UpdateCrawlerMain(1)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=UpdMsg))
@@ -214,7 +214,7 @@ def SearchPicUrl(url):
             t.append(imgObj.get('href').replace("//","https://")+"\n")
     return t
 def AddJpg():
-    # 目前累積兩次Update(手動更新)，尋找.png的檔案為第二次的開始
+    # 目前B.txt累積兩次Update(手動更新)，尋找.png的檔案為第二次的開始
     with codecs.open("B.txt","r","utf8") as r:
         l = list(row.replace("\n", "") + ".jpg\n" for row in r.readlines())
     with codecs.open("B.txt","w","utf8") as f:
