@@ -140,7 +140,7 @@ def Parameter():
 
 def WriteParameter(contents):
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-    with open("Parameter.txt","w") as wfile:
+    with open("Parameter.txt","a") as wfile:
         wfile.write(s)
 
 def WriteData(l):
