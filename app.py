@@ -147,6 +147,10 @@ def WriteData(l):
         f.writelines(l)
 
 def UpdateCrawlerMain(PageNum):
+    T = {}
+    T["aa"] = "aa"
+    WriteParameter(T)
+
     Continue = True
     prePage = ""
     UHeader = "https://www.ptt.cc"
@@ -174,7 +178,7 @@ def UpdateCrawlerMain(PageNum):
         # region subUrl
         subUrl = []
         title = soup.findAll('div', {'class': 'title'})
-        for t in title:
+        for t in title[:5]:
             if str(t).find("<a href") >= 0:
                 tObj = t.find_all("a")[0]
                 subUrl.append(UHeader+tObj.get("href"))
