@@ -135,7 +135,8 @@ def intTry(Val=None):
 def Parameter():
     with open("Parameter.txt","r") as file:
         s = file.read().replace("\n", "=")
-        return Str2Dict(s, "=")
+        # return Str2Dict(s, "=")
+        return s
 
 def WriteParameter(contents):
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
