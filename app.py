@@ -157,7 +157,7 @@ def UpdateCrawlerMain(PageNum):
     # region Handle
     while N <= PageNum:
         N = N + 1
-        time.sleep(3)
+        time.sleep(2)
         print("Now Number = ", N)
 
         # region Paging
