@@ -47,7 +47,7 @@ def handle_message(event):
     if event.message.text == "更新":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
+            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知1"))
         UpdMsg = UpdateCrawlerMain(1)
         line_bot_api.reply_message(
             event.reply_token,
