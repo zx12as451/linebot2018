@@ -150,6 +150,8 @@ def UpdateCrawlerMain(PageNum):
     T = {}
     T["aa"] = "aa"
     WriteParameter(T)
+    d = Parameter()
+    print(d)
 
     Continue = True
     prePage = ""
