@@ -56,7 +56,14 @@ def handle_message(event):
     elif event.message.text == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-        print(s)
+        print("content",s)
+        with open("CheckFile.txt", "a") as wf:
+            wf.write("check now")
+        print("check finish")
+        with open("CheckFile.txt", "r") as rf:
+            s += rf.read()
+        print("Add check file content", s)
+
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=s))
@@ -135,8 +142,8 @@ def intTry(Val=None):
 def Parameter():
     with open("Parameter.txt","r") as file:
         s = file.read().replace("\n", "=")
-        # return Str2Dict(s, "=")
-        return s
+        return Str2Dict(s, "=")
+        # return s
 
 def WriteParameter(contents):
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
@@ -144,8 +151,10 @@ def WriteParameter(contents):
         wfile.write(s)
 
 def WriteData(l):
-    with codecs.open("B.txt","a","utf8") as f:
-        f.writelines(l)
+    print("-----write down img------")
+    print(l)
+    # with codecs.open("B.txt","a","utf8") as f:
+    #     f.writelines(l)
 
 def UpdateCrawlerMain(PageNum):
     T = {}
@@ -191,6 +200,7 @@ def UpdateCrawlerMain(PageNum):
         # region UpdatePic
         for su in subUrl:
             l = SearchPicUrl(su)
+            print("PicNum : ",len(l))
             AddPicNum = AddPicNum + len(l)
             WriteData(l)
         # endregion
