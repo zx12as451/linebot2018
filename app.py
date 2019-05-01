@@ -83,12 +83,20 @@ def handle_message(event):
         print("push flower")
         line_bot_api.push_message(groupID,
                                   ImageSendMessage(original_content_url=url, preview_image_url=url))
-        print("reply")
+        print("reply flower")
         line_bot_api.reply_message(event.reply_token,
-                ImageSendMessage(
-                original_content_url=TestImg,  # Pic Url
-                preview_image_url=TestImg)  # Preview Pic
-        )
+                                   ImageSendMessage(
+                                       original_content_url=url,  # Pic Url
+                                       preview_image_url=url)  # Preview Pic
+                                   )
+        print("reply TestImg")
+        line_bot_api.reply_message(event.reply_token,
+                                   ImageSendMessage(
+                                       original_content_url=TestImg,  # Pic Url
+                                       preview_image_url=TestImg)  # Preview Pic
+                                   )
+
+        print("finish")
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
