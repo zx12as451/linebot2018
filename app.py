@@ -69,25 +69,26 @@ def handle_message(event):
         groupID = "C85c238b7e59ccfaa3adcfdabbd1a8360"
         print("UserID",event.source.user_id)
         print("GroupID",event.source.group_id)
-        url = "http://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
+        url = "https://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
         url2 = "https://i.imgur.com/p1ejUnL.jpg"
         url3 = "https://i.imgur.com/VWPOxhl.jpg"
-        url4 = "https://imgur.com/sCo9pHA.jpg"
-        # print("reply")
-        # line_bot_api.reply_message(event.reply_token,
-        #         ImageSendMessage(
-        #         original_content_url=url2,  # Pic Url
-        #         preview_image_url=url2)  # Preview Pic
-        # )
-        print("push UserID")
-        line_bot_api.push_message(userID,
-                                  ImageSendMessage(original_content_url=url3, preview_image_url=url3))
+        url4 = "https://i.imgur.com/sCo9pHA.jpg"
+        TestImg = "test.jpg"
+        # print("push UserID")
+        # line_bot_api.push_message(userID,
+        #                           ImageSendMessage(original_content_url=url3, preview_image_url=url3))
         print("push groupID")
         line_bot_api.push_message(groupID,
                                   ImageSendMessage(original_content_url=url4, preview_image_url=url4))
         print("push flower")
         line_bot_api.push_message(groupID,
                                   ImageSendMessage(original_content_url=url, preview_image_url=url))
+        print("reply")
+        line_bot_api.reply_message(event.reply_token,
+                ImageSendMessage(
+                original_content_url=TestImg,  # Pic Url
+                preview_image_url=TestImg)  # Preview Pic
+        )
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
