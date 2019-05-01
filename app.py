@@ -56,13 +56,8 @@ def handle_message(event):
     elif event.message.text == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-        print("content",s)
-        with open("CheckFile.txt", "a") as wf:
-            wf.write("check now")
-        print("check finish")
-        with open("CheckFile.txt", "r") as rf:
-            s += rf.read()
-        print("Add check file content", s)
+        with open("C.txt", "r") as rf:
+            print("New Add:", rf.read())
 
         line_bot_api.reply_message(
             event.reply_token,
@@ -153,6 +148,11 @@ def WriteParameter(contents):
 def WriteData(l):
     print("-----write down img------")
     print(l)
+    lstjpg = list(row.replace("\n", "") + ".jpg\n" for row in l)
+
+    with codecs.open("C.txt","w","utf8") as f:
+        f.writelines(l)
+
     # with codecs.open("B.txt","a","utf8") as f:
     #     f.writelines(l)
 
@@ -190,7 +190,7 @@ def UpdateCrawlerMain(PageNum):
         # region subUrl
         subUrl = []
         title = soup.findAll('div', {'class': 'title'})
-        for t in title[:5]:
+        for t in title[:2]:
             if str(t).find("<a href") >= 0:
                 tObj = t.find_all("a")[0]
                 subUrl.append(UHeader+tObj.get("href"))
