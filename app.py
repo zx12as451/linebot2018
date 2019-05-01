@@ -62,6 +62,14 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=s))
+    elif event.message.text == "特抽":
+        url = "http://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
+        line_bot_api.reply_message(event.reply_token,
+                ImageSendMessage(
+                # type='image',
+                original_content_url=url,  # Pic Url
+                preview_image_url=url)  # Preview Pic
+        )
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
