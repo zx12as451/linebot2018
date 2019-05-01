@@ -65,8 +65,8 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=s))
     elif event.message.text == "特抽":
-        userID = "Ua1f0d71da0aa5d12d0132aba8cff150f"
-        groupID = "C85c238b7e59ccfaa3adcfdabbd1a8360"
+        userID = event.source.user_id
+        groupID = event.source.group_id
         print("UserID",event.source.user_id)
         print("GroupID",event.source.group_id)
         url = "https://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
