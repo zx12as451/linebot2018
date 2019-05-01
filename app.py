@@ -42,7 +42,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    print("UserID=",event.source.userId,"GroupID",event.source.groupId)
+    print(event)
+    print(MessageEvent)
     print("Handle: reply_token: " + event.reply_token + ", message: " + event.message.text)
     # content = "{}: {}".format(event.source.user_id, event.message.text)
     if event.message.text == "更新":
@@ -64,6 +65,8 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=s))
     elif event.message.text == "特抽":
+        userID = "Ua1f0d71da0aa5d12d0132aba8cff150f"
+        groupID = "C85c238b7e59ccfaa3adcfdabbd1a8360"
         url = "http://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
         url2 = "https://i.imgur.com/p1ejUnL.jpg"
         url3 = "https://i.imgur.com/VWPOxhl.jpg"
@@ -75,13 +78,13 @@ def handle_message(event):
                 preview_image_url=url2)  # Preview Pic
         )
         print("push flower")
-        line_bot_api.push_message(event.source.userId,
+        line_bot_api.push_message(groupID,
                                   ImageSendMessage(original_content_url=url, preview_image_url=url))
         print("push UserID")
-        line_bot_api.push_message(event.source.userId,
+        line_bot_api.push_message(userID,
                                   ImageSendMessage(original_content_url=url3, preview_image_url=url3))
         print("push groupID")
-        line_bot_api.push_message(event.source.groupId,
+        line_bot_api.push_message(groupID,
                                   ImageSendMessage(original_content_url=url4, preview_image_url=url4))
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
