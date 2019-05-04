@@ -75,6 +75,13 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 returnContent(event.message.text,Num,"特"))
+    elif event.message.txt == "重複":
+        Msg = ""
+        Msg += DelRepeat("Flower", "Flower.txt")
+        Msg += DelRepeat("PTTBeauty", "B.txt")
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=Msg))
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
@@ -150,12 +157,10 @@ def Parameter():
     with open("Parameter.txt", "r") as file:
         s = file.read().replace("\n", "=")
         return Str2Dict(s, "=")
-
 def WriteParameter(contents):
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
     with open("Parameter.txt", "a") as wfile:
         wfile.write(s + "\n")
-
 def Log(Type, AddPicNum):
     d = Parameter()
     NewD = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
@@ -173,7 +178,15 @@ def Log(Type, AddPicNum):
 
     WriteParameter(d)
     return msg
-
+def DelRepeat(Type, filename):
+    with open(filename,"r") as r:
+        data = r.read().split("\n")
+    Org = len(data)
+    data = list(set(data))
+    New = len(data)
+    with open(filename, "w") as w:
+        w.writelines(list(row.replace("\n","")+"\n" for row in data))
+    return "After Repeat Function [" + Type + ".txt] TotalPic" + str(Org) + "->" + str(New)
 # endregion
 
 # region Update PTT Beauty
@@ -282,15 +295,14 @@ def FlowWriteFile(lstPins):
 def GetFlowerImg(url):
     d = GetRequest(url)
     content = ""
-    for row in d.split(';'):
-        if row.find("board") > 0:
+    for row in d.split('\n'):
+        if row.find('"board"') > 0:
             content = row
 
-    j = json.loads(content.replace('app.page["board"] = ', ""))
+    j = json.loads(content.replace('app.page["board"] = ', "")[:-1])
     user_id = j["user_id"]
     board_id = j["board_id"]
     return FlowWriteFile(j["pins"])
-
 # endregion
 # endregion
 
