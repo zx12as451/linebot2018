@@ -78,12 +78,12 @@ def handle_message(event):
                 returnContent(event.message.text,Num,"特"))
 
     elif event.message.text == "重複":
-        Msg = []
-        Msg.append(DelRepeat("Flower", "Flower.txt"))
-        Msg.append(DelRepeat("PTTBeauty", "B.txt"))
+        Message = []
+        Message.append(TextSendMessage(text=DelRepeat("Flower", "Flower.txt")))
+        Message.append(TextSendMessage(text=DelRepeat("PTTBeauty", "B.txt")))
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=Msg))
+            Message)
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
