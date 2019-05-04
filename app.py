@@ -179,8 +179,8 @@ def Log(Type, AddPicNum):
 # region Update PTT Beauty
 def WriteData(Type,l):
     print("-----write down img-" + str(len(l)) + "-----")
-    filePath = "Flower.txt" if type == "特" else "B.txt"
-    if(Type != "特"):
+    filePath = "Flower.txt" if Type == "Flower" else "B.txt"
+    if(Type != "Flower"):
         l = list(row.replace("\n", "") + ".jpg\n" for row in l)
 
     with codecs.open(filePath, "a", "utf8") as f:
