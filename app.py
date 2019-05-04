@@ -165,7 +165,7 @@ def Log(Type, AddPicNum):
     msg = "Update Date : " + d['Update'] + "->" + NewD
     msg = msg + "\n" + "Add " + str(AddPicNum) + " Picture"
 
-    filePath = "Flower.txt" if Type == "Flower" else "linebot2018/B.txt"
+    filePath = "Flower.txt" if Type == "Flower" else "B.txt"
     with open(filePath, "r") as file:
         TotalPic = len(file.read().split("\n"))
     print("[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum))
@@ -177,12 +177,13 @@ def Log(Type, AddPicNum):
 # endregion
 
 # region Update PTT Beauty
-def WriteData(l):
-    print("-----write down img------")
-    print(l)
-    lstjpg = list(row.replace("\n", "") + ".jpg\n" for row in l)
+def WriteData(Type,l):
+    print("-----write down img-" + str(len(l)) + "-----")
+    filePath = "Flower.txt" if type == "特" else "B.txt"
+    if(Type != "特"):
+        l = list(row.replace("\n", "") + ".jpg\n" for row in l)
 
-    with codecs.open("B.txt", "w", "utf8") as f:
+    with codecs.open(filePath, "a", "utf8") as f:
         f.writelines(l)
 def UpdatePTTBeauty(PageNum):
     prePage = ""
@@ -267,7 +268,7 @@ def FlowWriteFile(lstPins):
         subUrl = "https://hbimg.huabanimg.com/"+row["file"]["key"]
         t.append(subUrl)
 
-    WriteData(t)
+    WriteData("Flower",t)
     Log("Flower",len(t))
     # url = "https://huaban.com/boards/19403052/?jv3wp3bb&max=2413593581&limit=20&wfl=1"
     lastPins = lstPins[len(lstPins) - 1]
