@@ -78,10 +78,9 @@ def handle_message(event):
                 returnContent(event.message.text,Num,"特"))
 
     elif event.message.text == "重複":
-        Msg = ""
-        Msg += DelRepeat("Flower", "Flower.txt")
-        Msg += "\n"
-        Msg += DelRepeat("PTTBeauty", "B.txt")
+        Msg = []
+        Msg.append(DelRepeat("Flower", "Flower.txt"))
+        Msg.append(DelRepeat("PTTBeauty", "B.txt"))
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=Msg))
