@@ -180,7 +180,9 @@ def Log(Type, AddPicNum):
 def WriteData(Type,l):
     print("-----write down img-" + str(len(l)) + "-----")
     filePath = "Flower.txt" if Type == "Flower" else "B.txt"
-    if(Type != "Flower"):
+    if(Type == "Flower"):
+        l = list(row.replace("\n", "") + "\n" for row in l)
+    else:
         l = list(row.replace("\n", "") + ".jpg\n" for row in l)
 
     with codecs.open(filePath, "a", "utf8") as f:
