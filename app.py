@@ -79,7 +79,7 @@ def handle_message(event):
 
     elif event.message.text == "重複":
         Msg = ""
-        Msg += DelRepeat("Flower", "Flower.txt")
+        Msg += DelRepeat("Flower", "Flower.txt") +"\n"
         Msg += DelRepeat("PTTBeauty", "B.txt")
         line_bot_api.reply_message(
             event.reply_token,
@@ -188,7 +188,7 @@ def DelRepeat(Type, filename):
     New = len(data)
     with open(filename, "w") as w:
         w.writelines(list(row.replace("\n","")+"\n" for row in data))
-    return "After Repeat Function [" + Type + ".txt] TotalPic" + str(Org) + "->" + str(New)
+    return "After Repeat Function \n [" + Type + ".txt] TotalPic=" + str(Org) + "->" + str(New)
 # endregion
 
 # region Update PTT Beauty
