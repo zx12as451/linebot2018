@@ -42,61 +42,39 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    print(event)
-    print(MessageEvent)
+    # print(event)
+    # print(MessageEvent)
+    # print("UserID", event.source.user_id)
+    # print("GroupID", event.source.group_id)
     print("Handle: reply_token: " + event.reply_token + ", message: " + event.message.text)
     # content = "{}: {}".format(event.source.user_id, event.message.text)
-    if event.message.text == "更新":
+    if event.message.text.find("更新") == 0:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知1"))
-        UpdMsg = UpdateCrawlerMain(0)
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=UpdMsg))
+            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
 
+        # UpdMsg = UpdatePTTBeauty(0)
+        FlowerMain(event.message.text)
+        TargetID = event.source.group_id
+        print("TargetID="+TargetID)
+        line_bot_api.push_message(
+            TargetID,
+            TextSendMessage(text='更新完成')
+        )
     elif event.message.text == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-        with open("C.txt", "r") as rf:
-            print("New Add:", rf.read())
-
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=s))
     elif event.message.text == "特抽":
-        userID = event.source.user_id
-        groupID = event.source.group_id
-        print("UserID",event.source.user_id)
-        print("GroupID",event.source.group_id)
-        url = "https://hbimg.huabanimg.com/ddaab757b7896829cd248ba670053e19d29a08281e432-2jUmTN"
-        url2 = "https://i.imgur.com/p1ejUnL.jpg"
-        url3 = "https://i.imgur.com/VWPOxhl.jpg"
-        url4 = "https://i.imgur.com/sCo9pHA.jpg"
-        TestImg = "test.jpg"
-        # print("push UserID")
-        # line_bot_api.push_message(userID,
-        #                           ImageSendMessage(original_content_url=url3, preview_image_url=url3))
-        print("push groupID")
-        line_bot_api.push_message(groupID,
-                                  ImageSendMessage(original_content_url=url4, preview_image_url=url4))
-        print("push flower")
-        line_bot_api.push_message(groupID,
-                                  ImageSendMessage(original_content_url=url, preview_image_url=url))
-        print("reply flower")
-        line_bot_api.reply_message(event.reply_token,
-                                   ImageSendMessage(
-                                       original_content_url=url,  # Pic Url
-                                       preview_image_url=url)  # Preview Pic
-                                   )
-        print("reply TestImg")
-        line_bot_api.reply_message(event.reply_token,
-                                   ImageSendMessage(
-                                       original_content_url=TestImg,  # Pic Url
-                                       preview_image_url=TestImg)  # Preview Pic
-                                   )
-
-        print("finish")
+        if str(event.message.text).find("特抽") != -1: # 是否含有"抽"
+            FilterMsg = str(event.message.text).replace("特抽","")  # 取代後的訊息
+            Num = intTry(FilterMsg) # 取代後訊息是否能轉換成數值
+            print(Num, "次")
+            line_bot_api.reply_message(
+                event.reply_token,
+                returnContent(event.message.text,Num,"特"))
     else:
         if str(event.message.text).find("抽") != -1: # 是否含有"抽"
             FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
@@ -109,13 +87,13 @@ def handle_message(event):
 
 import os
 import random
-def returnContent(U_Receive,Times):
+def returnContent(U_Receive,Times,type="普通"):
     # C = TextSendMessage(text=U_Receive)
     if str(U_Receive).find("抽") != -1:
         if Times <= 5:
             lst = []
             for i in range(Times):
-                img = RandomPic()
+                img = RandomPic(type)
                 C = ImageSendMessage(
                     # type='image',
                     original_content_url=img,  # Pic Url
@@ -124,10 +102,10 @@ def returnContent(U_Receive,Times):
                 lst.append(C)
                 print(img, i,"/",Times, "次")
             return lst
-
-def RandomPic():
+def RandomPic(type):
     img = "https://m1.ablwang.com/uploadfile/2017/0901/20170901042508280.jpg"
-    with open("B.txt","r") as file:
+    filePath = "Flower.txt" if type == "特" else "B.txt"
+    with open(filePath,"r") as file:
         d = file.read()
         l = d.split("\n")
         img = random.choice(l)
@@ -139,6 +117,7 @@ import requests
 import time
 import datetime
 import codecs
+import json
 
 # region Public Function
 # MyStr = a,b,c,d,e,f => {'a':'b','c':'d','e':'f'}
@@ -167,38 +146,45 @@ def intTry(Val=None):
         return int(Val)
     except:
         return 0
-# endregion
-
 def Parameter():
-    with open("Parameter.txt","r") as file:
+    with open("Parameter.txt", "r") as file:
         s = file.read().replace("\n", "=")
         return Str2Dict(s, "=")
-        # return s
 
 def WriteParameter(contents):
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-    with open("Parameter.txt","a") as wfile:
-        wfile.write(s)
+    with open("Parameter.txt", "a") as wfile:
+        wfile.write(s + "\n")
 
+def Log(Type, AddPicNum):
+    d = Parameter()
+    NewD = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
+    # Send Message
+    if list(d.keys()).count('Update') is 0:
+        d['Update'] = "None"
+    msg = "Update Date : " + d['Update'] + "->" + NewD
+    msg = msg + "\n" + "Add " + str(AddPicNum) + " Picture"
+
+    filePath = "Flower.txt" if Type == "Flower" else "linebot2018/B.txt"
+    with open(filePath, "r") as file:
+        TotalPic = len(file.read().split("\n"))
+    print("[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum))
+    d['Update'] = "[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum)
+
+    WriteParameter(d)
+    return msg
+
+# endregion
+
+# region Update PTT Beauty
 def WriteData(l):
     print("-----write down img------")
     print(l)
     lstjpg = list(row.replace("\n", "") + ".jpg\n" for row in l)
 
-    with codecs.open("C.txt","w","utf8") as f:
+    with codecs.open("B.txt", "w", "utf8") as f:
         f.writelines(l)
-
-    # with codecs.open("B.txt","a","utf8") as f:
-    #     f.writelines(l)
-
-def UpdateCrawlerMain(PageNum):
-    T = {}
-    T["bb"] = "b"
-    WriteParameter(T)
-    d = Parameter()
-    print(d)
-
-    Continue = True
+def UpdatePTTBeauty(PageNum):
     prePage = ""
     UHeader = "https://www.ptt.cc"
     url = UHeader+"/bbs/Beauty/index.html"
@@ -241,20 +227,9 @@ def UpdateCrawlerMain(PageNum):
         # endregion
     # endregion
 
-    # region Log
-    d = Parameter()
-    NewD = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
-    # Send Message
-    if list(d.keys()).count('Update') is 0:
-        d['Update'] = "None"
-    msg = "Update Date : " + d['Update'] + "->" + NewD
-    msg = msg + "\n" + "Add " + str(AddPicNum) + " Picture"
+    msg = Log(AddPicNum)
 
-    d['Update'] = NewD
-    WriteParameter(d)
-    # endregion
     return msg
-
 def SearchPicUrl(url):
     print(url)
     html = GetRequest(url)
@@ -265,12 +240,55 @@ def SearchPicUrl(url):
         if imgObj is not None:
             t.append(imgObj.get('href').replace("//","https://")+"\n")
     return t
-def AddJpg():
-    # 目前B.txt累積兩次Update(手動更新)，尋找.png的檔案為第二次的開始
-    with codecs.open("B.txt","r","utf8") as r:
-        l = list(row.replace("\n", "") + ".jpg\n" for row in r.readlines())
-    with codecs.open("B.txt","w","utf8") as f:
-        f.writelines(l)
+# endregion
+
+# region Update Flower
+def FlowerMain(message):
+    # event.message.text = "更新-19403052-3"
+    if(message.count("-") != 2):
+        print("Example : 更新-19403052-3")
+        return False
+
+    lst = message.split('-')
+    boardsID = lst[1]
+    totalN = lst[2]
+    print(boardsID, totalN)
+
+    # boardsID = "19403052"
+    # totalN = 2
+    Url = "https://huaban.com/boards/" + boardsID + "/"
+    for i in range(int(totalN)):
+        time.sleep(1)
+        NextUrl = GetFlowerImg(Url)
+        Url = NextUrl
+def FlowWriteFile(lstPins):
+    t = []
+    for row in lstPins:
+        subUrl = "https://hbimg.huabanimg.com/"+row["file"]["key"]
+        t.append(subUrl)
+
+    WriteData(t)
+    Log("Flower",len(t))
+    # url = "https://huaban.com/boards/19403052/?jv3wp3bb&max=2413593581&limit=20&wfl=1"
+    lastPins = lstPins[len(lstPins) - 1]
+    lastPin_id = lastPins["pin_id"]
+    boardID = lastPins["board_id"]
+    NextUrl = "https://huaban.com/boards/" + str(boardID) + "/?jv3wp3bb&max=" + str(lastPin_id) + "&limit=20&wfl=1"
+    print("NextUrl=",NextUrl)
+    return NextUrl
+def GetFlowerImg(url):
+    d = GetRequest(url)
+    content = ""
+    for row in d.split(';'):
+        if row.find("board") > 0:
+            content = row
+
+    j = json.loads(content.replace('app.page["board"] = ', ""))
+    user_id = j["user_id"]
+    board_id = j["board_id"]
+    return FlowWriteFile(j["pins"])
+
+# endregion
 # endregion
 
 if __name__ == "__main__":
