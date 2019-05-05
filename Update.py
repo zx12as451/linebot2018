@@ -1,125 +1,23 @@
-# encoding: utf-8
-from flask import Flask, request, abort
-
-from linebot import (
-    LineBotApi, WebhookHandler
-)
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
-)
-
-app = Flask(__name__)
-
-# 填入你的 message api 資訊
-Token = "hR+zZ1KpsaRQYcF9CIvvsc4rVvZ1tHaQgjz1JlBOIvLLtMW7n6yaSHqhksoJtqWKw7iOBSoO6bKpIxJbk/VPAW/+ROcRTU5L5kYEiX8WhJhSWqU1YFhQkK0knhTkVSd3LlHDZ2C/LMi6GW8GU7U2PwdB04t89/1O/w1cDnyilFU="
-channel = "69df63f9a6f70870fc131c5d6045d4a9"
-# userID = "Ua1f0d71da0aa5d12d0132aba8cff150f"
-
-line_bot_api = LineBotApi(Token)
-handler = WebhookHandler(channel)
-
-# 設定你接收訊息的網址，如 https://YOURAPP.herokuapp.com/callback
-@app.route("/callback", methods=['POST'])
-def callback():
-    # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
-
-    # get request body as text
-    body = request.get_data(as_text=True)
-    print("Request body: " + body, "Signature: " + signature)
-
-    # handle webhook body
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-
-    return 'OK'
-
-
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    # print(event)
-    # print(MessageEvent)
-    # print("UserID", event.source.user_id)
-    # print("GroupID", event.source.group_id)
-    print("Handle: reply_token: " + event.reply_token + ", message: " + event.message.text)
-    # content = "{}: {}".format(event.source.user_id, event.message.text)
-    if event.message.text.find("更新") == 0:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
-
+# 線上更新也能使用，只是免費空間會自動還原環境，必須採用手動更新
+def UpdateMain(message):
+    if message.find("更新") == 0:
+        print("需要一段時間，請稍後......更新完成另發通知")
         # UpdMsg = UpdatePTTBeauty(0)
-        FlowerMain(event.message.text)
-        TargetID = event.source.group_id
-        print("TargetID = " + TargetID)
-        line_bot_api.push_message(
-            TargetID,
-            TextSendMessage(text='更新完成')
-        )
-    elif event.message.text == "檢查":
+        FlowerMain(message)
+        print("更新完成")
+    elif message == "檢查":
         contents = Parameter()
         s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=s))
-
-    elif str(event.message.text).find("特抽") != -1:  # 是否含有"特抽"
-        if str(event.message.text).find("特抽") != -1: # 是否含有"特抽"
-            FilterMsg = str(event.message.text).replace("特抽","")  # 取代後的訊息
-            Num = intTry(FilterMsg) # 取代後訊息是否能轉換成數值
-            print(Num, "次")
-            line_bot_api.reply_message(
-                event.reply_token,
-                returnContent(event.message.text,Num,"特"))
-
-    elif event.message.text == "重複":
+        print(s)
+    elif message == "重複":
         Message = []
-        Message.append(TextSendMessage(text=DelRepeat("Flower", "Flower.txt")))
-        Message.append(TextSendMessage(text=DelRepeat("PTTBeauty", "B.txt")))
-        line_bot_api.reply_message(
-            event.reply_token,
-            Message)
-    else:
-        if str(event.message.text).find("抽") != -1: # 是否含有"抽"
-            FilterMsg = str(event.message.text).replace("抽","")  # 取代後的訊息
-            Num = intTry(FilterMsg) # 取代後訊息是否能轉換成數值
-            print(Num, "次")
-            line_bot_api.reply_message(
-                event.reply_token,
-                returnContent(event.message.text,Num))
-
-
-import os
-import random
-def returnContent(U_Receive,Times,type="普通"):
-    # C = TextSendMessage(text=U_Receive)
-    if str(U_Receive).find("抽") != -1:
-        if Times <= 5:
-            lst = []
-            for i in range(Times):
-                img = RandomPic(type)
-                C = ImageSendMessage(
-                    # type='image',
-                    original_content_url=img,  # Pic Url
-                    preview_image_url=img  # Preview Pic
-                )
-                lst.append(C)
-                print(img, i,"/",Times, "次")
-            return lst
-def RandomPic(type):
-    img = "https://m1.ablwang.com/uploadfile/2017/0901/20170901042508280.jpg"
-    filePath = "Flower.txt" if type == "特" else "B.txt"
-    with open(filePath,"r") as file:
-        d = file.read()
-        l = d.split("\n")
-        img = random.choice(l)
-    return img
-
+        Message.append(DelRepeat("Flower", "Flower.txt"))
+        Message.append(DelRepeat("PTTBeauty", "B.txt"))
+        print(Message)
+    print("UpdateMain")
+    L = {}
+    L["MessageLog"] = datetime.datetime.now().strftime("%Y/%m/%d %H:%M") + " Message " + message
+    WriteParameter(L)
 # region Update Pic DataBase
 from bs4 import BeautifulSoup
 import requests
@@ -137,7 +35,7 @@ def Str2Dict(MyStr,SpChar="_"):
     return dict(zip(it, it))
 def GetRequest(Url):
     # print("Please Wait 1 Second")
-    time.sleep(1)
+    time.sleep(2)
     req = requests.get(url=Url, headers={'Content-type': 'text/plain; charset=utf-8'}, timeout=10)
     try:
         if (req.headers["Content-Type"].find("charset=Big5") > 0):
@@ -156,14 +54,17 @@ def intTry(Val=None):
     except:
         return 0
 def Parameter():
-    with open("Parameter.txt", "r") as file:
+    with codecs.open("Parameter.txt", "r","utf8") as file:
         s = file.read().replace("\n", "=")
         return Str2Dict(s, "=")
 def WriteParameter(contents):
+    print("Logs contents=", contents)
     s = '\n'.join(v + "=" + str(contents[v]) for v in contents)
+    print("Logs s=", s)
     with codecs.open("Parameter.txt", "a","utf8") as wfile:
         wfile.write(s + "\n")
 def Log(Type, AddPicNum):
+    print("Log Function")
     d = Parameter()
     NewD = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
     # Send Message
@@ -175,10 +76,11 @@ def Log(Type, AddPicNum):
     filePath = "Flower.txt" if Type == "Flower" else "B.txt"
     with open(filePath, "r") as file:
         TotalPic = len(file.read().split("\n"))
+    NewUpd = {}
     print("[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum))
-    d['Update'] = "[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum)
+    NewUpd['Update'] = "[" + Type + "]_" + NewD + " Total " + str(TotalPic) + " Insert " + str(AddPicNum)
 
-    WriteParameter(d)
+    WriteParameter(NewUpd)
     return msg
 def DelRepeat(Type, filename):
     with open(filename,"r") as r:
@@ -262,7 +164,7 @@ def SearchPicUrl(url):
 
 # region Update Flower
 def FlowerMain(message):
-    # event.message.text = "更新-19403052-3"
+    # message = "更新-19403052-3"
     if(message.count("-") != 2):
         print("Example : 更新-19403052-3")
         return False
@@ -276,6 +178,7 @@ def FlowerMain(message):
     # totalN = 2
     Url = "https://huaban.com/boards/" + boardsID + "/"
     for i in range(int(totalN)):
+        print("Loop",i+1,"/",totalN)
         time.sleep(1)
         NextUrl = GetFlowerImg(Url)
         Url = NextUrl
@@ -307,8 +210,22 @@ def GetFlowerImg(url):
     return FlowWriteFile(j["pins"])
 # endregion
 # endregion
+# endregion
+
+# region For This Update.py
+def LineMessageResponse(Msg):
+    if(type(Msg) == "list"):
+        for m in Msg:
+            print(m)
+    else:
+        print(Msg)
+# endregion
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=os.environ['PORT'])
-    # UpdateCrawlerMain(10)
-    # AddJpg()
+    # 更新-boardID-迴圈次數(1次約20張)  更新-24116838-30  更新-52334297-30 19403052
+    # l = ["更新-24116838-40","更新-52334297-40","更新-19403052-40"]
+    # for m in l:
+    RequestMessage = input("像LineBot一樣的輸入(更新、檢查、重複)，更新請比照格式 : ")
+    UpdateMain(RequestMessage)
+    # t = Parameter()
+    # print(t["MessageLog"])
