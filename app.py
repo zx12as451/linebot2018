@@ -51,7 +51,7 @@ def handle_message(event):
     if event.message.text.find("更新") == 0:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知"))
+            TextSendMessage(text="需要一段時間，請稍後......更新完成另發通知!!"))
 
         # UpdMsg = UpdatePTTBeauty(0)
         FlowerMain(event.message.text)
