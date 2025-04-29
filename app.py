@@ -55,11 +55,20 @@ def handle_message(event):
 
         # UpdMsg = UpdatePTTBeauty(0)
         FlowerMain(event.message.text)
-        TargetID = event.source.group_id
+
+        if event.source.type == 'group':
+            TargetID = event.source.group_id
+        elif event.source.type == 'user':
+            TargetID = event.source.user_id
+        elif event.source.type == 'room':
+            TargetID = event.source.room_id
+        else:
+            TargetID = None
+            
         print("TargetID = " + TargetID)
         line_bot_api.push_message(
             TargetID,
-            TextSendMessage(text='更新完成')
+            TextSendMessage(text='更新完成OK')
         )
     elif event.message.text == "檢查":
         contents = Parameter()
