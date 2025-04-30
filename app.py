@@ -1,4 +1,13 @@
 # encoding: utf-8
+import os
+import random
+from bs4 import BeautifulSoup
+import requests
+import time
+import datetime
+import codecs
+import json
+
 from flask import Flask, request, abort, send_from_directory, jsonify
 
 from linebot import (
@@ -155,8 +164,7 @@ def download():
 def serve_file(filename):
     return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
 
-import os
-import random
+
 def returnContent(U_Receive,Times,type="普通"):
     # C = TextSendMessage(text=U_Receive)
     if str(U_Receive).find("抽") != -1:
@@ -182,12 +190,6 @@ def RandomPic(type):
     return img
 
 # region Update Pic DataBase
-from bs4 import BeautifulSoup
-import requests
-import time
-import datetime
-import codecs
-import json
 
 # region Public Function
 # MyStr = a,b,c,d,e,f => {'a':'b','c':'d','e':'f'}
