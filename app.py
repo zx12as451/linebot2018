@@ -1,5 +1,5 @@
 # encoding: utf-8
-from flask import Flask, request, abort
+from flask import Flask, request, abort, send_from_directory, jsonify
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -11,7 +11,11 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 )
 
+from yt_downloader_utils import download_youtube_video
+
 app = Flask(__name__)
+DOWNLOAD_FOLDER = "downloads"
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 # 填入你的 message api 資訊
 Token = "hR+zZ1KpsaRQYcF9CIvvsc4rVvZ1tHaQgjz1JlBOIvLLtMW7n6yaSHqhksoJtqWKw7iOBSoO6bKpIxJbk/VPAW/+ROcRTU5L5kYEiX8WhJhSWqU1YFhQkK0knhTkVSd3LlHDZ2C/LMi6GW8GU7U2PwdB04t89/1O/w1cDnyilFU="
@@ -55,7 +59,7 @@ def handle_message(event):
 
         # UpdMsg = UpdatePTTBeauty(0)
         FlowerMain(event.message.text)
-
+        
         if event.source.type == 'group':
             TargetID = event.source.group_id
         elif event.source.type == 'user':
@@ -101,7 +105,55 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 returnContent(event.message.text,Num))
+        else:
+            # /mp3 https://...
+            msg = event.message.text.strip()
+            if msg.startswith("/mp3 ") or msg.startswith("/mp4 "):
+                fmt = "mp3" if msg.startswith("/mp3") else "mp4"
+                url = msg.split(" ", 1)[1]
+                print("get mp3 or mp4.  url = ", url)
 
+                try:
+                    file_path = download_youtube_video(url, output_dir="/tmp", format=fmt)
+
+                    if fmt == "mp4":
+                        line_bot_api.reply_message(event.reply_token, VideoSendMessage(
+                            original_content_url=f"https://yourdomain.com/downloads/{os.path.basename(file_path)}",
+                            preview_image_url="https://yourdomain.com/static/preview.jpg"  # 可用預覽圖
+                        ))
+                    else:
+                        line_bot_api.reply_message(event.reply_token, AudioSendMessage(
+                            original_content_url=f"https://yourdomain.com/downloads/{os.path.basename(file_path)}",
+                            duration=240000  # 以毫秒計算，可自行偵測音訊長度
+                        ))
+                except Exception as e:
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"❌ 下載失敗: {str(e)}"))
+
+
+@app.route("/")
+def index():
+    return "✅ YouTube Downloader Server 運行中"
+
+@app.route("/download", methods=["POST"])
+def download():
+    data = request.json
+    url = data.get("url")
+    fmt = data.get("format", "mp4")
+
+    if not url:
+        return jsonify({"error": "缺少 URL"}), 400
+
+    try:
+        file_path = download_youtube_video(url, output_dir=DOWNLOAD_FOLDER, format=fmt)
+        filename = os.path.basename(file_path)
+        download_url = request.url_root + "downloads/" + filename
+        return jsonify({"success": True, "url": download_url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/downloads/<filename>")
+def serve_file(filename):
+    return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
 
 import os
 import random
