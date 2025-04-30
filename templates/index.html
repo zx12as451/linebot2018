@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube Downloader</title>
+    <style>
+        body { font-family: Arial; background: #fffdf7; padding: 30px; }
+        input, select, button { padding: 10px; font-size: 16px; margin: 5px 0; }
+        .result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🎬 YouTube 下載器</h2>
+    <label>影片網址：</label><br>
+    <input type="text" id="url" size="60" placeholder="請貼上 YouTube 影片連結"><br>
+    <label>格式：</label><br>
+    <select id="format">
+        <option value="mp4">MP4 影片</option>
+        <option value="mp3">MP3 音訊</option>
+    </select><br>
+    <button onclick="startDownload()">⬇️ 開始下載</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+    function startDownload() {
+        const url = document.getElementById("url").value;
+        const format = document.getElementById("format").value;
+
+        document.getElementById("result").innerText = "⏳ 正在下載中... 請稍候";
+
+        fetch("/download", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url, format: format })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("result").innerHTML = 
+                    `✅ 下載完成：<a href="${data.url}" target="_blank">點我下載</a>`;
+            } else {
+                document.getElementById("result").innerHTML = "❌ 錯誤：" + data.error;
+            }
+        })
+        .catch(error => {
+            document.getElementById("result").innerHTML = "❌ 發生錯誤：" + error;
+        });
+    }
+    </script>
+</body>
+</html>

@@ -8,7 +8,7 @@ import datetime
 import codecs
 import json
 
-from flask import Flask, request, abort, send_from_directory, jsonify
+from flask import Flask, request, abort, send_from_directory, jsonify, render_template
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -141,7 +141,7 @@ def handle_message(event):
 
 @app.route("/")
 def index():
-    return "✅ YouTube Downloader Server 運行中"
+    return render_template("index.html")
 
 @app.route("/download", methods=["POST"])
 def download():

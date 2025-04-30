@@ -11,7 +11,9 @@ def download_youtube_video(url: str, output_dir: str = ".", format: str = "mp4")
     :return: 下載後檔案的完整路徑
     """
     try:
+        print("start to download yt:", url)
         yt = pytubefix.YouTube(url)
+        print("title:", yt.title)
 
         if format == "mp4":
             # 選擇最高解析度 mp4 非 progressive 影片
