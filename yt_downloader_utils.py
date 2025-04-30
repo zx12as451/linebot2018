@@ -34,9 +34,17 @@ def download_youtube_video(url: str, output_dir: str = ".", format: str = "mp4")
 
         elif format == "mp3":
             print("mp3", flush=True)
-            stream = yt.streams.filter(only_audio=True).first()
+            streams = yt.streams.filter(only_audio=True)
+            print("streams mp3")
+            if not streams:
+                print("no stream 1", flush=True)
+                raise RuntimeError("找不到可下載的音訊串流")
+
+            print("get first", flush=True)
+            stream = streams.first()              
+            print("stream first", flush=True)  
             if not stream:
-                print("no stream", flush=True)
+                print("no stream 2", flush=True)
                 raise Exception("找不到合適的 MP3 音訊串流")
             print("download", flush=True)
             file_path = stream.download(output_path=output_dir)
