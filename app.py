@@ -7,6 +7,9 @@ import time
 import datetime
 import codecs
 import json
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 from flask import Flask, request, abort, send_from_directory, jsonify, render_template
 
@@ -141,6 +144,8 @@ def handle_message(event):
 
 @app.route("/")
 def index():
+    print("✅ 測試 log 是否出現", flush=True)
+    logging.info("home page")
     return render_template("index.html")
 
 @app.route("/download", methods=["POST"])

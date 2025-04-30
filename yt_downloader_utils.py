@@ -12,7 +12,10 @@ def download_youtube_video(url: str, output_dir: str = ".", format: str = "mp4")
     """
     try:
         print("start to download yt:", url)
-        yt = pytubefix.YouTube(url)
+        try:
+            yt = pytubefix.YouTube(url)
+        except Exception as e:
+            raise RuntimeError(f"無法建立 YouTube 物件（可能是影片無效）: {e}")
         print("title:", yt.title)
 
         if format == "mp4":
