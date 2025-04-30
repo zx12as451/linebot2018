@@ -15,6 +15,8 @@ def download_youtube_video(url: str, output_dir: str = ".", format: str = "mp4")
         print("start to download yt:", url, flush=True)
         try:
             yt = pytubefix.YouTube(url)
+            _ = yt.streams  # 強制觸發 check_availability
+            print("streams:", yt.streams.all(), flush=True)  # 這行會觸發 availability 檢查
         except Exception as e:
             print("[ERROR] 建立 YouTube 物件失敗", flush=True)
             traceback.print_exc()  # 顯示詳細錯誤行號
